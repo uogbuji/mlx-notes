@@ -2,7 +2,7 @@
 
 # Apple MLX for AI/Large Language Models—Day One
 
-_Author: Uche Ogbuji_
+_Author: [Uche Ogbuji](https://ucheog.carrd.co/)_
 
 I've been using llama.cpp on Mac Silicon for months now, and [my brother, Chimezie](https://huggingface.co/cogbuji) has been nudging me to give [MLX](https://github.com/ml-explore/mlx) a go.
 I finally set aside time today to get started, with an eventual goal of adding support for MLX model loading & usage in [OgbujiPT](https://github.com/OoriData/OgbujiPT). I'd been warned it's rough around the edges, but it's been stimulating to play with. I thought I'd capture some of my notes, including some pitfalls I ran into, which might help anyone else trying to get into MLX in its current state.
