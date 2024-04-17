@@ -34,7 +34,7 @@
 Use [Jupytext](https://jupytext.readthedocs.io/en/latest/) to convert the `.md` articles to `.ipynb` notebooks:
 
 ```sh
-upytext --to ipynb 2024/MLX-day-one.md
+jupytext --to ipynb 2024/MLX-day-one.md
 ```
 
 May have to convert cells using plain `pip` to use `%pip` instead. It also doesn't seem to check the format metadata, so you might need to convert non-Python cells back to Markdown by hand.
