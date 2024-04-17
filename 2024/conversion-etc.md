@@ -176,4 +176,4 @@ You've had a quick overview on how to convert Hugging Face weights to MLX format
 
 * [Hugging Face hub docs on uploading models](https://huggingface.co/docs/hub/en/models-uploading)
 * [Hugging Face/Transformers docs on sharing models](https://huggingface.co/docs/transformers/model_sharing) - more relevant to notebook & in-Python use
-* Chat templating is a very fiddly topic, but [this Hugging Face post](https://huggingface.co/blog/chat-templates) is a useful intro. They do push Jinja2 hard, and there's nothng wrong with Jinja2, but as with any tool I'd say use it if it's the right one, and not out of reflex.
+* Chat templating is a very fiddly topic, but [this Hugging Face post](https://huggingface.co/blog/chat-templates) is a useful intro. They do push Jinja2 hard, and there's nothing wrong with Jinja2, but as with any tool I'd say use it if it's the right one, and not out of reflex.
