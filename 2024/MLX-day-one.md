@@ -51,7 +51,7 @@ The first time you run this load it will download from HuggingFace. The reposito
 response = generate(model, tokenizer, prompt="A fun limerick about four-leaf clovers is:", verbose=True)
 ```
 
-You should see the completion response being streamed. I got a truly terrible limerick. Your mileage may very.
+You should see the completion response being streamed. I got a truly terrible limerick. Your mileage may vary.
 
 You can also use [ChatML-style interaction](https://huggingface.co/docs/transformers/main/en/chat_templating):
 
@@ -63,7 +63,7 @@ chat_prompt = tokenizer.apply_chat_template(messages, tokenize=False)
 response = generate(model, tokenizer, prompt=chat_prompt, verbose=True)
 ```
 
-`response` is the plain old string with the LLM completion/response. It will already have been streamed to the console thanks to `verbose=True`, right after the converted prompt, displayed so you can see how the ChatML format has been converted using special, low-level LLM tokens such as `<|im_start|>` & `<|im_end|>`. Having the system message in the chat prompting and all that definitely, by my quick impressions, made the interactions far more coherent.
+`response` is the plain old string with the LLM completion/response. It will already have been streamed to the console thanks to `verbose=True`, right after the converted prompt, displayed so you can see how the ChatML format has been converted using special, low-level LLM tokens such as `<|im_start|>` & `<|im_end|>` (more on LLM tokens in a future article). Having the system message in the chat prompting and all that definitely, by my quick impressions, made the interactions far more coherent.
 
 ![Animation of generate() chat response](../assets/images/2024/apple-mlx-ail-llm-day-one.gif)
 

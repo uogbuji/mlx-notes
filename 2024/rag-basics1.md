@@ -253,7 +253,7 @@ While doing the final edits of this article I was enjoying the amazing groove of
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Gf8G3OhHW8I?si=ywIzDLuBnOeHMmTL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-I gre up on Afrobeat (not "Afribeats, abeg, oh!"), back home in Nigeria, and I'm beyond delight to see how this magical, elemental music has found its way around the world and continues to flourish. Lovely to see Seun, my favorite contemporary exponent of his father, Fela's genre, OGs such as Kunle Justice on electric bass (a man who should be much better known!) and of course the dynamic, Brazil-based women of Funmilayo, named after Fela's mother. This one betta now! Make you enjoy!
+I gre up on Afrobeat (not "Afrobeats, abeg, oh!"), back home in Nigeria, and I'm beyond delight to see how this magical, elemental music has found its way around the world and continues to flourish. Lovely to see Seun, my favorite contemporary exponent of his father, Fela's genre, OGs such as Kunle Justice on electric bass (a man who should be much better known!) and of course the dynamic, Brazil-based women of Funmilayo, named after Fela's mother. This one betta now! Make you enjoy!
 
 # Additional resources
 
