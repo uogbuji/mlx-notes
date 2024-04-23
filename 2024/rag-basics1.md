@@ -41,7 +41,7 @@ If you don't need all the added PDF tools you can install just vlite by taking o
 
 ## Ever more resources
 
-We need content to add to the database. I've made it easy by providing the markdown of articles in thei MLX notes series (including this article). You can [download them from Github](https://github.com/uogbuji/mlx-notes/assets/resources/2024/ragbasics/files), the whole directory, or just the contained files, and put them in a location you can refer to in the code later.
+We need content to add to the database. I've made it easy by providing the markdown of articles in thei MLX notes series (including this article). You can [download them from Github](https://github.com/uogbuji/mlx-notes/tree/main/assets/resources/2024/ragbasics/files), the whole directory, or just the contained files, and put them in a location you can refer to in the code later.
 
 Build your vlite vector database from those files by running the code in listing 1, which I've also [provided as a download from Github](https://github.com/uogbuji/mlx-notes/assets/resources/2024/ragbasics/listings). Make sure you first give it a look and perhaps update the `CONTENT_FOLDER` and `COLLECTION_FPATH` values.
 
