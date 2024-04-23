@@ -251,9 +251,13 @@ Now that we can search a database of content in order to select items which seem
 
 While doing the final edits of this article I was enjoying the amazing groove of the Funmilayo Afrobeat Orquestra, plus Seun Kuti's Egypt 80, a song called Upside Down. I thought to myself (this groove is part of the article whether anyone knows it, so why not share?) Since I'm also a poet, DJ, etc. I think I'll start sharing with these articles some artistic snippet that accompanied me in the process, or maybe something that's been inspiring me lately.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Gf8G3OhHW8I?si=ywIzDLuBnOeHMmTL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Funmilayo Afrobeat Orquestra & Seun Kuti's Egypt 80 - Upside Down [Live Session]](https://img.youtube.com/vi/Gf8G3OhHW8I/0.jpg)](https://www.youtube.com/watch?v=Gf8G3OhHW8I)
 
-I gre up on Afrobeat (not "Afrobeats, abeg, oh!"), back home in Nigeria, and I'm beyond delight to see how this magical, elemental music has found its way around the world and continues to flourish. Lovely to see Seun, my favorite contemporary exponent of his father, Fela's genre, OGs such as Kunle Justice on electric bass (a man who should be much better known!) and of course the dynamic, Brazil-based women of Funmilayo, named after Fela's mother. This one betta now! Make you enjoy!
+<!--
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Gf8G3OhHW8I?si=ywIzDLuBnOeHMmTL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+-->
+
+I grew up on Afrobeat (not "Afrobeats, abeg, oh!"), back home in Nigeria, and I'm beyond delight to see how this magical, elemental music has found its way around the world and continues to flourish. Lovely to see Seun, my favorite contemporary exponent of his father, Fela's genre, OGs such as Kunle Justice on electric bass (a man who should be much better known!) and of course the dynamic, Brazil-based women of Funmilayo, named after Fela's mother. This one betta now! Make you enjoy!
 
 # Additional resources
 
