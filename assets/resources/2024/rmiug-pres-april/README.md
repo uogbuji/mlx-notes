@@ -1,6 +1,6 @@
 # Hands-on Intro to MLX April 2024
 
-via RMAIIG, Boulder, CO
+[via RMAIIG, Boulder, CO](https://www.meetup.com/ai-ml-engineering-aie-an-rmaiig-subgroup/events/300581632)
 
 [Presentation slides](https://docs.google.com/presentation/d/1IUNuFcS3YrkPFn7Oxw7uoB94TMnIK_wD1Pxu3-tzTjo/edit?usp=sharing)
 
@@ -62,7 +62,8 @@ python -m mlx_lm.convert
 --mlx-path ./mlx/h2o-danube2-1.8b-chat -q
 ```
 
-## OK enough words; what about images?
+~~## OK enough words; what about images?~~
+## A picture is worth how many words?
 
 ```sh
 cd mlx-examples/stable_diffusion
