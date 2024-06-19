@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 
 from sentence_transformers import SentenceTransformer
+from qdrant_client import QdrantClient
 
 from ogbujipt.text_helper import text_split
 from ogbujipt.embedding.qdrant import collection
@@ -13,10 +14,13 @@ os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
 TEXT_SUFFIXES = ['.md', '.txt']
 CONTENT_FOLDER = Path('assets/resources/2024/ragbasics/files')
+DBPATH = '/tmp/qdrant_test'  # Set up disk storage location
+QCLIENT = QdrantClient(path=DBPATH)
+
 
 def setup_db(files):
-    # Create content database named "ragbasics"
-    qcoll = collection('ragbasics', embedding_model)
+    # Create content database named "ragbasics", using the disk storage location set up above
+    qcoll = collection('ragbasics', embedding_model, db=QCLIENT)
 
     for fname in files.iterdir():
         if fname.suffix in TEXT_SUFFIXES:

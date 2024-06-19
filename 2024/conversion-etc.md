@@ -124,7 +124,7 @@ Run `huggingface-cli login` and paste the token you copied earlier. You're now r
 
 You'll want to have a README.md file, from which the Hugging Face model card and some metadata are extracted. I started with the metadata from the original model. It's MDX format, which is markdown with metadata headers and optional inline instructions. The [original model's metadata headers are as follows](https://huggingface.co/h2oai/h2o-danube2-1.8b-chat/raw/main/README.md):
 
-```
+```markdown
 ---
 language:
 - en
