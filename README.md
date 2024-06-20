@@ -29,10 +29,7 @@
   <td>
   <a href="2024/rag-basics1.md">Rendered markdown</a><br>
   <a href="https://www.linkedin.com/pulse/retrieval-augmentation-mlx-bag-full-rag-part-1-oori-data-tc83c">LinkedIn version</a><br>
-  Jupyter notebook: In Progress…
-  <!--
   <a href="2024/rag-basics1.ipynb">Jupyter notebook</a>
-  -->
   </td>
 </tr></table>
 
