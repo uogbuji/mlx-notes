@@ -36,6 +36,20 @@
   </td>
 </tr></table>
 
+## Retrieval augmentation with MLX: A bag full of RAG, part 2
+
+<table><tr>
+  <td><a href="2024/rag-basics2.md"><img src="assets/images/2024/RAG-basics-2-cover.jpg" width="256" alt="Google Gemini-generated cover image for: Retrieval augmentation with MLX: A bag full of RAG, part 2"/></a></td>
+  <td>
+  <a href="2024/rag-basics2.md">Rendered markdown</a><br>
+  <a href="https://www.linkedin.com/pulse/retrieval-augmentation-mlx-bag-full-rag-part-2-oori-data-rgcxc">LinkedIn version</a><br>
+  Jupyter notebook: In Progress…
+  <!--
+  <a href="2024/rag-basics1.ipynb">Jupyter notebook</a>
+  -->
+  </td>
+</tr></table>
+
 # More (up to date) MLX resources
 
 <!-- ## Synchronizing markdown article & notebook formats -->

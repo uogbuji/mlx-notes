@@ -1,11 +1,3 @@
-LinkedIn-only notes:
-
-_Note: LinkedIn doesn't seem to offer syntax highlighting for code. Code will be highlighted in the GitHub article version, coming tomorrow._
-
-Re cover image: "We recommend uploading or dragging in an image that is 1920x1080 pixels"
-
-----
-
 ![Google Gemini-generated cover image: Truck full of Appleicious content; ready to roll](../assets/images/2024/RAG-basics-2-cover.jpg)
 
 # Retrieval augmentation with MLX: A bag full of RAG, part 2
@@ -29,6 +21,8 @@ In the previous article, [Listing 4 (qdrant_build_db.py)](https://github.com/uog
 The code first queries the vector database for chunks of content semantically similar to the user question or prompt, which is hard-coded for simplicity. It then pulls the chunks into a template to construct an overall prompt, which is sent to the LLM for completion.
 
 ### Listing 1 (qdrant_rag_101.py)
+
+_Note: [You can find all code listings on GitHub.](https://github.com/uogbuji/mlx-notes/tree/main/assets/resources/2024/ragbasics/listings)_
 
 ```py
 # qdrant_rag_101.py
