@@ -40,9 +40,9 @@
   <td>
   <a href="2024/rag-basics2.md">Rendered markdown</a><br>
   <a href="https://www.linkedin.com/pulse/retrieval-augmentation-mlx-bag-full-rag-part-2-oori-data-rgcxc">LinkedIn version</a><br>
-  Jupyter notebook: In Progress…
+  <a href="2024/rag-basics2.ipynb">Jupyter notebook</a>
   <!--
-  <a href="2024/rag-basics1.ipynb">Jupyter notebook</a>
+  Jupyter notebook: In Progress…
   -->
   </td>
 </tr></table>
