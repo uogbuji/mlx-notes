@@ -158,10 +158,10 @@ The model I've used in the code above is my new favorite, general-purpose, open-
 
 Chunk size plays a critical role in the effectiveness and efficiency of Retrieval-Augmented Generation (RAG) systems. The right chunk size balances the need for detailed, relevant retrieval with the speed and faithfulness of generated responses.
 
-- **Precision vs. Context:** Smaller chunks (e.g., 250–256 tokens) enable more precise retrieval, as each chunk is focused on a narrow context. However, if chunks are too small, important context may be lost, leading to fragmented or incomplete answers[1][2].
-- **Larger Chunks:** Larger chunks (e.g., 512 tokens or a paragraph) provide more context, reducing the risk of missing relevant details, but can dilute the representation if multiple topics are included, potentially lowering retrieval precision and slowing response generation[1][2][5].
-- **Experimentation is Key:** There is no universal optimal chunk size. Start with sizes between 250 and 512 tokens and adjust based on your data and use case. Monitor both retrieval accuracy and system latency to find the best balance[1][2][4][5].
-- **Semantic Chunking:** Advanced strategies, such as semantically informed chunking (e.g., the SPLICE method), can further improve retrieval by aligning chunk boundaries with natural topic or section breaks, preserving meaning and context[6].
+- **Precision vs. Context:** Smaller chunks (e.g., 250–256 tokens) enable more precise retrieval, as each chunk is focused on a narrow context. However, if chunks are too small, important context may be lost, leading to fragmented or incomplete answers.
+- **Larger Chunks:** Larger chunks (e.g., 512 tokens or a paragraph) provide more context, reducing the risk of missing relevant details, but can dilute the representation if multiple topics are included, potentially lowering retrieval precision and slowing response generation.
+- **Experimentation is Key:** There is no universal optimal chunk size. Start with sizes between 250 and 512 tokens and adjust based on your data and use case. Monitor both retrieval accuracy and system latency to find the best balance.
+- **Semantic Chunking:** Advanced strategies, such as semantically informed chunking (e.g., the SPLICE method), can further improve retrieval by aligning chunk boundaries with natural topic or section breaks, preserving meaning and context.
 
 ## Choosing the Right Embedding Model
 
