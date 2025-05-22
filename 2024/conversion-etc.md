@@ -23,14 +23,16 @@ pip install -U mlx mlx-lm
 
 If you do so, and in the unlikely event that you don't end up with the latest versions of packages after this, you might want to add the ` --force-reinstall` flag.
 
-I created a directory to hold the converted model
+~~I created a directory to hold the converted model~~ _New versions of MLX make this step obsolete_
 
+<!--
 ```sh
 mkdir -p ~/.local/share/models/mlx
 mkdir ~/.local/share/models/mlx/h2o-danube2-1.8b-chat
 ```
+-->
 
-Used the command line for the actual conversion
+I used the command line for the actual conversion
 
 ```sh
 python -m mlx_lm.convert --hf-path h2oai/h2o-danube2-1.8b-chat --mlx-path ~/.local/share/models/mlx/h2o-danube2-1.8b-chat -q
@@ -145,7 +147,15 @@ I added some descriptive information about the model and how to use it in MLX. T
 
 ## Upload
 
-[Hugging Face repositories are basically git and git-LFS](https://huggingface.co/docs/huggingface_hub/guides/upload), so you have many ways of interacting with them. In my case I ran a Python script:
+[Hugging Face repositories are basically git and git-LFS](https://huggingface.co/docs/huggingface_hub/guides/upload), so you have many ways of interacting with them.
+
+**UPDATE Auguat 2024** you can use the same `mlx_lm.convert` module with the `--upload-repo` option to upload.
+
+```sh
+python -m mlx_lm.convert --hf-path h2oai/h2o-danube2-1.8b-chat --mlx-path ~/.local/share/models/mlx/h2o-danube2-1.8b-chat -q --upload-repo ucheog/h2o-danube2-1.8b-chat-MLX-4bit
+```
+
+Alternatively, use the `huggingface_hub` library directly.
 
 ```py
 from huggingface_hub import HfApi, create_repo

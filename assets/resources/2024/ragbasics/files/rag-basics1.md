@@ -16,163 +16,7 @@ In this article I'll show through code examples how you can start to build RAG a
 
 # Trying out a vector DBMS
 
-So far in these articles the main benefit of MLX has been GenAI accelerated on Apple Silicon's Metal architecture. That's all about the "G" in RAG. It would be great to have the "R" part also taking some advantage of Metal, but that proves a bit tougher than I'd expected. Many of the best-known vector DBs (faiss, qdrant, etc.) use various techniques to accelerate embedding and perhaps lookup via GPU, but they focus on Nvidia (CUDA) and in some cases AMD (ROCm), with nothing for Metal.
-
-Following a hint from [Prince Canuma](https://huggingface.co/prince-canuma) I found [vlite—"a simple and blazing fast vector database"](https://github.com/sdan/vlite) whose docs include the promising snippet:
-
-> - `device` (optional): The device to use for embedding ('cpu', 'mps', or 'cuda'). Default is 'cpu'. 'mps' uses PyTorch's Metal Performance Shaders on M1 macs, 'cuda' uses a NVIDIA GPU for embedding generation.
-
-_Spoiler: I ended up abandoning vlite for reasons I'll cover, so feel free to not botgher trying any of the code examples until you get to the section "Using the Qdrant vector DBMS via OgbujiPT"._
-
-Installing vlite
-
-```sh
-pip install -Ur https://raw.githubusercontent.com/sdan/vlite/master/requirements.txt
-pip install "vlite[ocr]"
-```
-
-With the `[ocr]` modifier the vlite package is installed as well as helper packages for pulling text from PDF documents in the database. In my case I ran into pip errors such as the following.
-
-![pip errors trying to install vlite](../assets/images/2024/vlite-install-errors.png)
-
-These sorts of conflicting dependencies are a common annoyance in the AI space, especially with widely-used and fast-evolving packages such as transformers, tokenizers, pytorch, pydantics and such.
-
-If you don't need all the added PDF tools you can install just vlite by taking out the `[ocr]` modifier from the `pip` command.
-
-## Ever more resources
-
-We need content to add to the database. I've made it easy by providing the markdown of articles in thei MLX notes series (including this article). You can [download them from Github](https://github.com/uogbuji/mlx-notes/tree/main/assets/resources/2024/ragbasics/files), the whole directory, or just the contained files, and put them in a location you can refer to in the code later.
-
-Build your vlite vector database from those files by running the code in listing 1, which I've also [provided as a download from Github](https://github.com/uogbuji/mlx-notes/tree/main/assets/resources/2024/ragbasics/listings). Make sure you first give it a look and perhaps update the `CONTENT_FOLDER` and `COLLECTION_FPATH` values.
-
-### Listing 1 (vlite_build_db.py): Building a vlite vector database from markdown files on disk
-
-```py
-# vlite_build_db.py
-import os
-from pathlib import Path
-
-from vlite import VLite
-from vlite.utils import process_txt
-
-# Needed to silence a Hugging Face tokenizers library warning
-os.environ['TOKENIZERS_PARALLELISM'] = 'false'
-
-TEXT_SUFFIXES = ['.md', '.txt']
-# 
-CONTENT_FOLDER = Path('assets/resources/2024/ragbasics/files')
-# Path to a "CTX" file which is basically the vector DB in binary form
-COLLECTION_FPATH = Path('/tmp/ragbasics')
-
-def setup_db(files, collection):
-    # Create database
-    # If you don't specify a "collection" (basically a filename), vlite will create
-    # a file, using the current timestamp. under "contexts" in the current dir
-    # device='mps' uses Apple Metal acceleration for the embedding,
-    # which is typically the most expensive stage
-    vdb = VLite(collection=collection, device='mps')
-
-    for fname in files.iterdir():
-        if fname.suffix in TEXT_SUFFIXES:
-            print('Processing:', fname)
-            vdb.add(process_txt(fname))
-        else:
-            print('Skipping:', fname)
-    return vdb
-
-vdb = setup_db(CONTENT_FOLDER, COLLECTION_FPATH)
-vdb.save()  # Make sure the DB is up to date
-```
-
-First time you run this, you might get a long delay while it downloads and caches models needed for embeddings and the like (especially `onnx/model.onnx`). Again this is a common rigamarole with ML projects.
-
-# Retrieving from the vector DB
-
-Vlite takes a very raw and lightweight approach to vector database management. You can save embedded and otherwise indexed data to what it calls context files, which can later on be loaded for update or querying.
-
-Listing 2 loads the context file saved in the previous section (`/tmp/ragbasics.ctx`) and then tries to retrieve a snippet of text from one of these MLX articles.
-
-### Listing 2 (vlite_retrieve.py): Retrieving content from a vlite vector database on disk
-
-```py
-# vlite_retrieve.py
-from pathlib import Path
-
-from vlite import VLite
-
-COLLECTION_FPATH = Path('/tmp/ragbasics')
-
-vdb = VLite(collection=COLLECTION_FPATH, device='mps')
-
-# top_k=N means take the N closest matches
-# return_scores=True adds the closeness scores to the return
-results = vdb.retrieve('ChatML format has been converted using special, low-level LLM tokens', top_k=1, return_scores=True)
-print(results[0])
-```
-
-When I first tried this, the results were terrible. RAG is always trickier than you may think, and there are many considerations to designing an effective RAG pipeline. One key one is how the content is partitioned within the vector DB, because each query will try to match and respond with particular chunks of text based on the query. By default vlite takes a naive approach of creating sequential chunks with up to 512 token length.
-
-## Wait, what are tokens again?
-
-Tokens have come up before in this series, and you might be wondering. "What are those, exactly?" Tokens are a really important concept with LLMs. When an LLM is dealing with language, it doesn't do so character by character, but it breaks down a given language into statistically useful groupings of characters, which are then identified with integer numbers. For example the characters "ing" occur pretty frequently, so a tokenizer might group those as a single token in many circumstances. It's sensitive to the surrounding character sequence, though, so the word "sing" might well be encoded as a single token of its own, regardless of containing "ing".
-
-The best way to get a feel of LLM tokenization is to play around with sample text and see how it gets converted. Luckily there are many tools out there to help, including [the simple llama-tokenizer-js playground](https://belladoreai.github.io/llama-tokenizer-js/example-demo/build/) web app which allows you to enter text and see how the popular Llama LLMs would tokenize them.
-
-![Quick exampls with the online Llama tokenizer](../assets/images/2024/tokenizer-examples.png)
-
-The colors don't mean anything special in themselves. They're just visual tiling to separate the tokens. Notice how start of text is a special token `<s>`. You might remember we also encountered some other special tokens such as `<|im_start|>` (begin conversation turn) in previous articles. LLM pre-training and fine-tuning changes the way things are tokenized, as part of setting the entire model of language. Llama won't tokenize exactly as, say ChatGPT does, but the basic concepts stay the same.
-
-The picture shows an example of how markup such as HTML can affect tokenization. There are models such as the commercial [Docugami](https://www.docugami.com/) which are trained towards efficient tokenization of markup. Code-specialized LLMs such as those used in programmer copilot tools would have efficient tokenizations of the sorts of constructs which are more common in programming code than in natural language.
-
-## Creating more sensible chunks
-
-In effect, the tokenization establishes the shape of language in a model. As such, it makes some sense, if you absolutely know no better, to at least use token boundaries in chunking text for vector lookups. We can do even better, though. Just as a basic approach it would be better to chunk each paragraph in these articles separately. That way you have a coherent thread of meaning in each chunk which is more likely to align, say with input from the user.
-
-In the following code I take over the chunking from vlite, using the `text_split` function available in [my company's open source OgbujiPT package](https://github.com/OoriData/OgbujiPT). Instead of fixed chunk sizes, I split by Markdown paragraphs (`\n\n`), with a guideline that chunks should be kept under 100 characters where possible.
-
-### Listing 3 (vlite_custom_split_build_db.py): Improved text splitting while building a vlite vector database from markdown files on disk
-
-```py
-import os
-from pathlib import Path
-
-from vlite import VLite
-
-from ogbujipt.text_helper import text_split
-
-# Needed to silence a Hugging Face tokenizers library warning
-os.environ['TOKENIZERS_PARALLELISM'] = 'false'
-
-TEXT_SUFFIXES = ['.md', '.txt']
-# 
-CONTENT_FOLDER = Path('assets/resources/2024/ragbasics/files')
-# Path to a "CTX" file which is basically the vector DB in binary form
-COLLECTION_FPATH = Path('/tmp/ragbasics')
-
-def setup_db(files, collection):
-    # Create database
-    # If you don't specify a "collection" (basically a filename), vlite will create
-    # a file, using the current timestamp. under "contexts" in the current dir
-    # device='mps' uses Apple Metal acceleration for the embedding,
-    # which is typically the most expensive stage
-    vdb = VLite(collection=collection, device='mps')
-
-    for fname in files.iterdir():
-        if fname.suffix in TEXT_SUFFIXES:
-            fname = str(fname)
-            print('Processing:', fname)
-            with open(fname) as fp:
-                # Governed by paragraph boundaries (\n\n), with a target chunk size of 100
-                for chunk in text_split(fp.read(), chunk_size=100, separator='\n\n'):
-                    print(chunk, '\n¶')
-                    vdb.add(chunk, metadata={'src-file': fname})
-        else:
-            print('Skipping:', fname)
-    return vdb
-
-vdb = setup_db(CONTENT_FOLDER, COLLECTION_FPATH)
-vdb.save()  # Make sure the DB is up to date
-```
+So far in these articles the main benefit of MLX has been GenAI accelerated on Apple Silicon's Metal architecture. That's all about the "G" in RAG. It would be great to have the "R" part also taking some advantage of Metal, but that proves a bit tougher than I'd expected. Many of the best-known vector DBs (faiss, qdrant, etc.) use various techniques to accelerate embedding and perhaps lookup via GPU, but they focus on Nvidia (CUDA) and in some cases AMD (ROCm), with nothing for Metal. We need content to add to the database. I've made it easy by providing the markdown of articles in thei MLX notes series (including this article). You can [download them from Github](https://github.com/uogbuji/mlx-notes/tree/main/assets/resources/2024/ragbasics/files), the whole directory, or just the contained files, and put them in a location you can refer to in the code later.
 
 Unfortunately this change didn't seem to improve vlite's ability to retrieve more relevant chunks. There might be something else going on in how I'm using it, and I'll certainly revisit vlite, but my next step was to give up on a Metal-accelerated vector database and just use a package I'm more familiar. PGVector is my usual go-to, but it adds a few dependencies I wanted to avoid for this write-up. We'll just use [Qdrant](https://qdrant.tech/).
 
@@ -184,7 +28,7 @@ My OgbujiPT library includes tools to make it easy to use Qdrant or PostgreSQL/P
 pip install ogbujipt qdrant_client sentence_transformers
 ```
 
-Listing 4 vectorizes the same markdown documents as before, and then does a sample retrieval, using Qdrant.
+Listing 4 vectorizes the same markdown documents as before, and then does a sample retrieval, using Qdrant. With the `text_split` function, available in [OgbujiPT](https://github.com/OoriData/OgbujiPT), I split by Markdown paragraphs (`\n\n`), with a guideline that chunks should be kept under 100 characters where possible.
 
 ### Listing 4 (qdrant_build_db.py): Switch to Qdrant for content database from markdown files on disk
 
@@ -193,7 +37,7 @@ Listing 4 vectorizes the same markdown documents as before, and then does a samp
 import os
 from pathlib import Path
 
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer  # ST docs: https://www.sbert.net/docs/
 from qdrant_client import QdrantClient
 
 from ogbujipt.text_helper import text_split
@@ -244,11 +88,73 @@ Matched chunk: `response` is the plain old string with the LLM completion/respon
 From file assets/resources/2024/ragbasics/files/MLX-day-one.md
 ```
 
-It's quite noticeable how much slower the embedding and indexing is with Qdrant, compared to vlite, which underscores why it would be nice to revisit the latter for such uses.
+You might not be able to tell off the bat, but the embedding and indexing of text in the examples above is much slower that need be. let's look into an option for speeding it up.
+
+# Using MLX-Embeddings for local, accelerated embedding generation
+
+mlx-embeddings is a package designed to generate text and image embeddings locally on Apple Silicon using the MLX framework. It uses Apple's Metal acceleration for much faster computation than cross-platform libraries like sentence-transformers.
+
+Install the package with:
+
+```sh
+pip install mlx-embeddings
+```
+
+Here's how you can use mlx-embeddings to generate embeddings for a list of texts:
+
+```py
+from mlx_embeddings import load, generate
+
+# Load a model (e.g., MiniLM in MLX format)
+model, processor = load("mlx-community/all-MiniLM-L6-v2-4bit")
+
+# Generate normalized embeddings for a list of texts
+output = generate(model, processor, texts=["I like grapes", "I like fruits"])
+embeddings = output.text_embeds  # Normalized embeddings
+
+# Example: Compute similarity matrix using MLX
+import mlx.core as mx
+similarity_matrix = mx.matmul(embeddings, embeddings.T)
+print("Similarity matrix between texts:")
+print(similarity_matrix)
+```
+
+This workflow is similar to sentence-transformers, but all computation runs natively on your Mac, taking full advantage of Apple Silicon hardware acceleration.
+
+mlx-embeddings supports a growing set of popular models, including BERT and XLM-RoBERTa, with more being added. Vision models are also supported, making it suitable for multimodal RAG applications
+
+You can use mlx-embeddings in place of sentence-transformers wherever you need to generate vector representations for indexing or retrieval. The embeddings can be stored in any vector database, including those mentioned in previous sections. For many usage scenarios MLX-based embedding and inference are significantly faster than running PyTorch-based models via CPU, and often faster than using non-native GPU backends on Mac.
+
+# A word on tokens
+
+Tokens have come up before in this series, and you might be wondering. "What are those, exactly?" Tokens are a really important concept with LLMs. When an LLM is dealing with language, it doesn't do so character by character, but it breaks down a given language into statistically useful groupings of characters, which are then identified with integer numbers. For example the characters "ing" occur pretty frequently, so a tokenizer might group those as a single token in many circumstances. It's sensitive to the surrounding character sequence, though, so the word "sing" might well be encoded as a single token of its own, regardless of containing "ing".
+
+The best way to get a feel of LLM tokenization is to play around with sample text and see how it gets converted. Luckily there are many tools out there to help, including [the simple llama-tokenizer-js playground](https://belladoreai.github.io/llama-tokenizer-js/example-demo/build/) web app which allows you to enter text and see how the popular Llama LLMs would tokenize them.
+
+![Quick exampls with the online Llama tokenizer](../assets/images/2024/tokenizer-examples.png)
+
+The colors don't mean anything special in themselves. They're just visual tiling to separate the tokens. Notice how start of text is a special token `<s>`. You might remember we also encountered some other special tokens such as `<|im_start|>` (begin conversation turn) in previous articles. LLM pre-training and fine-tuning changes the way things are tokenized, as part of setting the entire model of language. Llama won't tokenize exactly as, say ChatGPT does, but the basic concepts stay the same.
+
+The picture shows an example of how markup such as HTML can affect tokenization. There are models such as the commercial [Docugami](https://www.docugami.com/) which are trained towards efficient tokenization of markup. Code-specialized LLMs such as those used in programmer copilot tools would have efficient tokenizations of the sorts of constructs which are more common in programming code than in natural language.
+
+## Creating more sensible chunks
+
+As I mentioned, I used a simple text splitter from OgbujiPT above, but lately I've taken to use [Chonkie](https://github.com/chonkie-inc/chonkie), a library that offers a wide variety of flexible chunking options, chunking by tokens, and by LLM-guided heuristics.
+
+In effect, the tokenization establishes the shape of language in a model, which is why using token boundaries in chunking text can help avoid weid boundary issues in vector lookups. There ae many other chunking tchniques you can try, as well. Just to cite one example, you can chunk each paragraph separately, say in a collection of articles. That way you have a coherent thread of meaning in each chunk which is more likely to align with expected search patterns.
 
 # Generation next to come
 
-Now that we can search a database of content in order to select items which seem relevant to an input, we're ready to turn our attention to the generation component of RAG. Stay tuned for part 2, coming soon.
+Now that we can search a database of content in order to select items which seem relevant to an input, we're ready to turn our attention to the generation component of RAG, in part 2. Keep in mind always that RAG is trickier than one may think, and there are many considerations to designing an effective RAG pipeline.
+
+# Recent Developments (mid 2024 - mid 2025)
+
+As always, the MLX ecosystem is evolving rapidly, so readers should check for new models and tools regularly, here are some interesting tidbits dating from after I first wrote this article.
+
+* **Model Format Conversions**: The MLX ecosystem now includes many converted models (e.g., MiniLM, BGE) in MLX format, available on Hugging Face, which can be loaded directly using mlx-embeddings
+* **Alternative Embedding Packages**: Other projects like mlx_embedding_models and swift-embeddings enable running BERT- or RoBERTa-based embeddings natively on Mac, broadening the choices for local RAG workflows
+* **Multimodal RAG**: With MLX now supporting vision models in addition to language, it is possible to build multimodal RAG systems (text + image retrieval) entirely on-device
+* **Community Tools**: There is a growing ecosystem of RAG implementations optimized for MLX and Apple Silicon, including command-line tools and open-source projects for vector database integration
 
 # Cultural accompaniment
 
@@ -261,7 +167,3 @@ While doing the final edits of this article I was enjoying the amazing groove of
 -->
 
 I grew up on Afrobeat (not "Afrobeats, abeg, oh!"), back home in Nigeria, and I'm beyond delight to see how this magical, elemental music has found its way around the world and continues to flourish. Lovely to see Seun, my favorite contemporary exponent of his father, Fela's genre, OGs such as Kunle Justice on electric bass (a man who should be much better known!) and of course the dynamic, Brazil-based women of Funmilayo, named after Fela's mother. This one betta now! Make you enjoy!
-
-# Additional resources
-
-* [vlite documentation](https://github.com/sdan/vlite/blob/master/docs.md)
